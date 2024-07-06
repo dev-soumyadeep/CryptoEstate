@@ -1,1 +1,0 @@
-Lending token feature ,  not integrated
