@@ -1,10 +1,24 @@
-# onchain data
+**Features**
+**Property Listings**: Users can list properties for sale or rent, complete with detailed descriptions, images, and pricing.
 
-Addresses of contracts deployed on sepolia network:
+**Smart Contract Transactions**: Automated, secure, and transparent transactions powered by Ethereum smart contracts.
 
-```shell
-PropertyToken#PropertyToken - 0xF8D70e927b87106a0b4122efBdcDAF717DF08565
-```
-```shell
-Escrow#Escrow - 0x6D3B2e222F91C2304cb414851E39e1e9E7255b70
-```
+**Escrow Services**: Ensures safe transactions by holding funds in escrow until conditions are met.
+
+**Rental Management**: Easy management of rental agreements, payments, and durations.
+
+**Automatic Property Reclaim**: Automatically reclaims rented properties once the rental period expires, ensuring timely and efficient property management.
+
+
+**Technologies Used**
+**Solidity**: Smart contracts for Ethereum.
+
+**Hardhat**: Ethereum development environment.
+
+**React**: Frontend framework for building the user interface.
+
+**Ethers.js**: JavaScript library for interacting with the Ethereum blockchain.  
+
+**IPFS**: Decentralized storage for property images and metadata.
+
+**Note: This project is currently under development.**
