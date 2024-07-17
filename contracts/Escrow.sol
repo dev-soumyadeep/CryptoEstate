@@ -33,7 +33,7 @@ contract Escrow is AutomationCompatibleInterface{
     
     constructor(address _nftaddress, address _inspector)
     {
-        PTKcontract = new PropertyToken(0x5B38Da6a701c568545dCfcB03FcB875f56beddC4);
+        PTKcontract = new PropertyToken(0xe40FE2680fCE54909e3697b0689e685C7b84b869);
         nftaddress=_nftaddress;
         inspector=_inspector;
 
@@ -45,16 +45,17 @@ contract Escrow is AutomationCompatibleInterface{
     }
 
     mapping(uint=>bool)isListed;
-    mapping(uint=>bool)isPropertyOnRent;
     mapping(uint=>address)tenant;
-    mapping(address=>mapping(uint=>uint))returnTime;
-    mapping(address=>mapping(uint=>uint))rentDuration;
+    mapping(uint=>uint)returnTime;
+    mapping(uint=>uint)rentDuration;
     mapping(uint=>address)sellers;
     mapping(uint=>uint)escrowAmount;
     mapping(uint=>uint)priceForRent;
     mapping(uint=>uint)priceForBuy;
     mapping(uint=>bool)isInspectionPassed;
     mapping(uint=> mapping(address=>bool))approval;
+
+    uint[] public activeTokensOnRent;
 
     function listProperty(uint nftId,uint _priceForRent,uint _priceForBuy,uint _escrowAmt) public
     {
@@ -90,18 +91,18 @@ contract Escrow is AutomationCompatibleInterface{
     function depositEarnest(uint nftId,bool rent) public payable
     {
         require(isListed[nftId],"Property is already sold");
-        require(isPropertyOnRent[nftId],"Property is on Rent");
+        require(tenant[nftId]==address(0),"Property is on Rent");
         if(!rent)
             require(msg.value>=escrowAmount[nftId],"Amount should be greater than/equal to  escrow amount");
         else
         {
            require(msg.value>=priceForRent[nftId],"Amount should be greater than/equal to  escrow amount"); 
-           isPropertyOnRent[nftId]=true;
+           tenant[nftId]=msg.sender;
         }
     }
 
     function approveSale(uint nftId) public {
-        require(approval[nftId][msg.sender]==false,"ALready Approved");
+        require(!approval[nftId][msg.sender],"ALready Approved");
         approval[nftId][msg.sender]=true;
 
     }
@@ -127,7 +128,7 @@ contract Escrow is AutomationCompatibleInterface{
     function executeRent(uint nftId,uint duration) public {
         uint supply =  getSupply();
         require(nftId<=supply,"Property doesn't exists");
-        require(isPropertyOnRent[nftId],"Have to deposit Earnest first");
+        require(tenant[nftId]==msg.sender,"Have to deposit Earnest first");
         require(isInspectionPassed[nftId]==true,"Inspection Isn't passed");
         require(address(this).balance>=priceForRent[nftId],"Insufficient balance");
 
@@ -143,10 +144,11 @@ contract Escrow is AutomationCompatibleInterface{
             rent=rentFormonths;
 
         tenant[nftId]=msg.sender;
-        returnTime[msg.sender][nftId]=block.timestamp+duration;
-        rentDuration[msg.sender][nftId] = rent;
+        returnTime[nftId]=block.timestamp+duration;
+        rentDuration[nftId] = duration;
         (bool success,)=payable(owner).call{value:amount}("Amount transfered");
         IERC721(nftaddress).transferFrom(address(this),msg.sender,nftId);
+        activeTokensOnRent.push(nftId);
         require(success,"Transfer to owner failed");
         emit RentedPropertySuccess(nftId,msg.sender,owner,rent);
     }
@@ -156,11 +158,11 @@ contract Escrow is AutomationCompatibleInterface{
     }
 
     function returnRentedproperty(uint nftId) internal{
-        require(isPropertyOnRent[nftId],"Property is not on rent");
+        require(tenant[nftId]!=address(0),"Property is not on rent");
         uint rent;
         address owner = sellers[nftId];
         address currentTenant = getTenant(nftId);
-        uint duration = rentDuration[currentTenant][nftId];
+        uint duration = rentDuration[nftId];
         if(duration<7)
             rent=rentFordays;
         else if(duration>=7 && duration<30)
@@ -172,8 +174,8 @@ contract Escrow is AutomationCompatibleInterface{
         uint amountToReturn = priceForRent[nftId]-rent;
         IERC721(nftaddress).transferFrom(currentTenant ,owner,nftId);
         (bool success,)=payable(currentTenant ).call{value:amountToReturn}("amount transferred to tenant");
-        isPropertyOnRent[nftId]=false;
         tenant[nftId]=address(0);
+        returnTime[nftId] = 0;
         require(success,"Transfer to owner failed");
         emit returnRentedProperty(nftId,currentTenant,rent);
     }
@@ -182,22 +184,34 @@ contract Escrow is AutomationCompatibleInterface{
 
 
     function checkUpkeep(bytes calldata checkdata) external view override returns (bool upkeepNeeded, bytes memory performData) {
-        (address currentTenant ,uint nftId) = abi.decode(checkdata,(address,uint));
-        uint timeToreturn = returnTime[currentTenant ][nftId];
-        if(isPropertyOnRent[nftId] && tenant[nftId]==currentTenant )
-        upkeepNeeded = block.timestamp >= timeToreturn;
+        uint[] memory tokensToreturn = new uint[](activeTokensOnRent.length);
+        uint count = 0;
+        for(uint i=0;i<activeTokensOnRent.length;i++)
+        {
+            uint nftID = activeTokensOnRent[i];
+            if(tenant[nftID]!=address(0) && block.timestamp>=returnTime[nftID])
+            {
+                tokensToreturn[count] = nftID;
+                count++;
+            }
+            
+        }
 
-        performData = abi.encode(currentTenant,nftId);
+        uint [] memory propertyToReturn = new uint[](count);
+        for(uint i=0;i<=count;i++) propertyToReturn[i]=tokensToreturn[i];
+
+        upkeepNeeded = count>0;
+        performData=abi.encode(propertyToReturn);
+
+
     }
 
 
     function performUpkeep(bytes calldata performData) external override {
-        (address currentTenant ,uint nftId) = abi.decode(performData,(address,uint));
-        uint timeToreturn = returnTime[currentTenant][nftId];
+        (uint[] memory propertyToReturn) = abi.decode(performData,(uint[]));
 
-        if (block.timestamp >= timeToreturn && isPropertyOnRent[nftId]) {
-            returnRentedproperty(nftId);
-        }
+        for(uint i=0;i<propertyToReturn.length;i++) returnRentedproperty(propertyToReturn[i]);
+
     }
 
 
