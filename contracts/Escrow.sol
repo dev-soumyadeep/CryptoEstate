@@ -2,11 +2,10 @@
 pragma solidity ^0.8.20;
 
 import {PropertyToken} from "./ERC-721/PropertyToken.sol";
-import {IERC721} from "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 import {AutomationCompatibleInterface} from "@chainlink/contracts/src/v0.8/automation/AutomationCompatible.sol";
 contract Escrow is AutomationCompatibleInterface{
 
-    address public nftaddress;
+    address public PTKaddress;
     address public inspector;
     PropertyToken public PTKcontract;
 
@@ -31,11 +30,11 @@ contract Escrow is AutomationCompatibleInterface{
         uint rent
     );
     
-    constructor(address _nftaddress, address _inspector)
+    constructor(address _PTKaddress, address _inspector)
     {
-        PTKcontract = new PropertyToken(0xe40FE2680fCE54909e3697b0689e685C7b84b869);
-        nftaddress=_nftaddress;
+        PTKaddress=_PTKaddress;
         inspector=_inspector;
+        PTKcontract = PropertyToken(_PTKaddress);
 
     }
 
@@ -47,7 +46,7 @@ contract Escrow is AutomationCompatibleInterface{
     mapping(uint=>bool)isListed;
     mapping(uint=>address)tenant;
     mapping(uint=>uint)returnTime;
-    mapping(uint=>uint)rentDuration;
+    mapping(address=>mapping(uint=>uint))rentDuration;
     mapping(uint=>address)sellers;
     mapping(uint=>uint)escrowAmount;
     mapping(uint=>uint)priceForRent;
@@ -71,7 +70,7 @@ contract Escrow is AutomationCompatibleInterface{
 
     }
 
-    function getSupply() public view returns(uint){
+    function getTotalSupply() public view returns(uint){
         return PTKcontract.totalSupply();
     }
 
@@ -102,31 +101,31 @@ contract Escrow is AutomationCompatibleInterface{
     }
 
     function approveSale(uint nftId) public {
-        require(!approval[nftId][msg.sender],"ALready Approved");
+        require(approval[nftId][msg.sender]==false,"ALready Approved");
         approval[nftId][msg.sender]=true;
 
     }
 
     function executeBuying(uint nftId) public {
-        uint supply =  getSupply();
+        uint supply =  getTotalSupply();
         require(nftId<=supply,"Property doesn't exists");
         require(isInspectionPassed[nftId]==true,"Inspection Isn't passed");
         require(address(this).balance>=priceForBuy[nftId],"Insufficient balance");
 
         address seller = sellers[nftId];
         uint amount = escrowAmount[nftId];
-        
+        require(address(this).balance >= amount, "Insufficient balance in escrow contract");
 
         isListed[nftId]=false;
         (bool success,)=payable(seller).call{value:amount}("Amount transfered");
-        IERC721(nftaddress).transferFrom(address(this),msg.sender,nftId);
+        PTKcontract.transferFrom(address(this),msg.sender,nftId);
         require(success,"Transfer to seller failed");
         emit PurchaisedPropertySuccess(nftId,msg.sender,seller);
 
     }
 
     function executeRent(uint nftId,uint duration) public {
-        uint supply =  getSupply();
+        uint supply =  getTotalSupply();
         require(nftId<=supply,"Property doesn't exists");
         require(tenant[nftId]==msg.sender,"Have to deposit Earnest first");
         require(isInspectionPassed[nftId]==true,"Inspection Isn't passed");
@@ -145,9 +144,9 @@ contract Escrow is AutomationCompatibleInterface{
 
         tenant[nftId]=msg.sender;
         returnTime[nftId]=block.timestamp+duration;
-        rentDuration[nftId] = duration;
+        rentDuration[msg.sender][nftId] = duration;
         (bool success,)=payable(owner).call{value:amount}("Amount transfered");
-        IERC721(nftaddress).transferFrom(address(this),msg.sender,nftId);
+        PTKcontract.transferFrom(address(this),msg.sender,nftId);
         activeTokensOnRent.push(nftId);
         require(success,"Transfer to owner failed");
         emit RentedPropertySuccess(nftId,msg.sender,owner,rent);
@@ -162,7 +161,7 @@ contract Escrow is AutomationCompatibleInterface{
         uint rent;
         address owner = sellers[nftId];
         address currentTenant = getTenant(nftId);
-        uint duration = rentDuration[nftId];
+        uint duration = rentDuration[currentTenant][nftId];
         if(duration<7)
             rent=rentFordays;
         else if(duration>=7 && duration<30)
@@ -172,10 +171,19 @@ contract Escrow is AutomationCompatibleInterface{
 
         
         uint amountToReturn = priceForRent[nftId]-rent;
-        IERC721(nftaddress).transferFrom(currentTenant ,owner,nftId);
+        PTKcontract.transferFrom(currentTenant ,owner,nftId);
         (bool success,)=payable(currentTenant ).call{value:amountToReturn}("amount transferred to tenant");
         tenant[nftId]=address(0);
         returnTime[nftId] = 0;
+        for(uint i=0;i<activeTokensOnRent.length;i++)
+        {
+            if(activeTokensOnRent[i]==nftId)
+            {
+                activeTokensOnRent[i] = activeTokensOnRent[activeTokensOnRent.length-1];
+                activeTokensOnRent.pop();
+                break;
+            }
+        }
         require(success,"Transfer to owner failed");
         emit returnRentedProperty(nftId,currentTenant,rent);
     }
@@ -198,7 +206,7 @@ contract Escrow is AutomationCompatibleInterface{
         }
 
         uint [] memory propertyToReturn = new uint[](count);
-        for(uint i=0;i<=count;i++) propertyToReturn[i]=tokensToreturn[i];
+        for(uint i=0;i<count;i++) propertyToReturn[i]=tokensToreturn[i];
 
         upkeepNeeded = count>0;
         performData=abi.encode(propertyToReturn);
