@@ -2,8 +2,10 @@
 pragma solidity ^0.8.20;
 
 import {PropertyToken} from "./ERC-721/PropertyToken.sol";
+import "@openzeppelin/contracts/token/ERC721/utils/ERC721Holder.sol";
 import {AutomationCompatibleInterface} from "@chainlink/contracts/src/v0.8/automation/AutomationCompatible.sol";
-contract Escrow is AutomationCompatibleInterface{
+// import "@openzeppelin/contracts/access/Ownable.sol";
+contract Escrow is AutomationCompatibleInterface, ERC721Holder {
 
     address public PTKaddress;
     address public inspector;
@@ -30,11 +32,12 @@ contract Escrow is AutomationCompatibleInterface{
         uint rent
     );
     
-    constructor(address _PTKaddress, address _inspector)
+    constructor( address _inspector)
+
     {
-        PTKaddress=_PTKaddress;
+        
         inspector=_inspector;
-        PTKcontract = PropertyToken(_PTKaddress);
+        PTKcontract = new PropertyToken(address(this));
 
     }
 
@@ -56,12 +59,14 @@ contract Escrow is AutomationCompatibleInterface{
 
     uint[] public activeTokensOnRent;
 
-    function listProperty(uint nftId,uint _priceForRent,uint _priceForBuy,uint _escrowAmt) public
+    function listProperty(uint _priceForRent,uint _priceForBuy,uint _escrowAmt, string memory uri) public
     {
         require(_priceForRent>0,"Enter a Amount greater than 0");
         require(_priceForBuy>0,"Enter a Amount greater than 0");
         require(_escrowAmt>0,"Enter a Amount greater than 0");
 
+        PTKcontract.safeMint(address(this), uri);
+        uint nftId = getTotalSupply();
         isListed[nftId] = true;
         sellers[nftId]=msg.sender;
         priceForRent[nftId] = _priceForRent;
@@ -123,7 +128,6 @@ contract Escrow is AutomationCompatibleInterface{
         emit PurchaisedPropertySuccess(nftId,msg.sender,seller);
 
     }
-
     function executeRent(uint nftId,uint duration) public {
         uint supply =  getTotalSupply();
         require(nftId<=supply,"Property doesn't exists");
@@ -143,12 +147,12 @@ contract Escrow is AutomationCompatibleInterface{
             rent=rentFormonths;
 
         tenant[nftId]=msg.sender;
-        returnTime[nftId]=block.timestamp+duration;
+        returnTime[nftId]=block.timestamp+duration*1 days;
         rentDuration[msg.sender][nftId] = duration;
         (bool success,)=payable(owner).call{value:amount}("Amount transfered");
-        PTKcontract.transferFrom(address(this),msg.sender,nftId);
+        PTKcontract.giveRentTo(msg.sender,nftId);
         activeTokensOnRent.push(nftId);
-        require(success,"Transfer to owner failed");
+        require(success,"Transfer Rent to owner failed");
         emit RentedPropertySuccess(nftId,msg.sender,owner,rent);
     }
 
@@ -158,21 +162,10 @@ contract Escrow is AutomationCompatibleInterface{
 
     function returnRentedproperty(uint nftId) internal{
         require(tenant[nftId]!=address(0),"Property is not on rent");
-        uint rent;
-        address owner = sellers[nftId];
         address currentTenant = getTenant(nftId);
         uint duration = rentDuration[currentTenant][nftId];
-        if(duration<7)
-            rent=rentFordays;
-        else if(duration>=7 && duration<30)
-            rent=rentForweek;
-        else
-            rent=rentFormonths;
-
-        
-        uint amountToReturn = priceForRent[nftId]-rent;
-        PTKcontract.transferFrom(currentTenant ,owner,nftId);
-        (bool success,)=payable(currentTenant ).call{value:amountToReturn}("amount transferred to tenant");
+        uint rent=calculateRent(duration);
+        PTKcontract.giveRentBack(address(this),nftId);
         tenant[nftId]=address(0);
         returnTime[nftId] = 0;
         for(uint i=0;i<activeTokensOnRent.length;i++)
@@ -184,8 +177,20 @@ contract Escrow is AutomationCompatibleInterface{
                 break;
             }
         }
-        require(success,"Transfer to owner failed");
         emit returnRentedProperty(nftId,currentTenant,rent);
+    }
+
+    function calculateRent(uint duration) public view returns(uint)
+    {
+        uint rent=0;
+        if(duration<7)
+            rent=rentFordays;
+        else if(duration>=7 && duration<30)
+            rent=rentForweek;
+        else
+            rent=rentFormonths;
+
+        return rent;
     }
 
 

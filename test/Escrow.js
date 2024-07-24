@@ -14,31 +14,20 @@ describe("Escrow", function () {
   let tenant;
 
   const TOKEN_ID = 1;
-  const PRICE_FOR_RENT = ethers.parseEther("0.1");
-  const PRICE_FOR_BUY = ethers.parseEther("1");
-  const ESCROW_AMOUNT = ethers.parseEther("0.5");
 
   beforeEach(async function () {
     [owner, inspector, seller, buyer, tenant] = await ethers.getSigners();
 
-    // Deploy PropertyToken
-    PropertyToken = await ethers.getContractFactory("PropertyToken");
-    propertyToken = await PropertyToken.deploy(owner.address);
-    await propertyToken.waitForDeployment();
-
-    // Deploy Escrow
     Escrow = await ethers.getContractFactory("Escrow");
-    escrow = await Escrow.deploy(await propertyToken.getAddress(), inspector.address);
+    escrow = await Escrow.deploy(inspector.address);
     await escrow.waitForDeployment();
-
-    // Mint a token to the seller
-    await propertyToken.connect(owner).safeMint(seller.address, "https://example.com/token/1");
-    await propertyToken.connect(seller).approve(await escrow.getAddress(), TOKEN_ID);
+    const propertyTokenAddress = await escrow.PTKcontract();
+    propertyToken = await ethers.getContractAt("PropertyToken", propertyTokenAddress);
   });
 
   describe("Deployment", function () {
     it("Should set the right PTK address", async function () {
-      expect(await escrow.PTKaddress()).to.equal(await propertyToken.getAddress());
+      expect(await escrow.PTKcontract()).to.equal(await propertyToken.getAddress());
     });
 
     it("Should set the right inspector", async function () {
@@ -47,20 +36,28 @@ describe("Escrow", function () {
   });
 
   describe("Listing Property", function () {
+    const PRICE_FOR_RENT = ethers.parseEther("0.1");
+    const PRICE_FOR_BUY = ethers.parseEther("1");
+    const ESCROW_AMOUNT = ethers.parseEther("0.5");
+
     it("Should list a property", async function () {
-      await escrow.connect(seller).listProperty(TOKEN_ID, PRICE_FOR_RENT, PRICE_FOR_BUY, ESCROW_AMOUNT);
+      await escrow.connect(seller).listProperty(PRICE_FOR_RENT, PRICE_FOR_BUY, ESCROW_AMOUNT, "uri");
       expect(await escrow.getSeller(TOKEN_ID)).to.equal(seller.address);
     });
 
     it("Should not allow listing with zero prices", async function () {
-      await expect(escrow.connect(seller).listProperty(TOKEN_ID, 0, PRICE_FOR_BUY, ESCROW_AMOUNT)).to.be.revertedWith("Enter a Amount greater than 0");
-      await expect(escrow.connect(seller).listProperty(TOKEN_ID, PRICE_FOR_RENT, 0, ESCROW_AMOUNT)).to.be.revertedWith("Enter a Amount greater than 0");
+      await expect(escrow.connect(seller).listProperty(0, PRICE_FOR_BUY, ESCROW_AMOUNT, "uri")).to.be.revertedWith("Enter a Amount greater than 0");
+      await expect(escrow.connect(seller).listProperty(PRICE_FOR_RENT, 0, ESCROW_AMOUNT, "uri")).to.be.revertedWith("Enter a Amount greater than 0");
     });
   });
 
   describe("Depositing Earnest", function () {
+    const PRICE_FOR_RENT = ethers.parseEther("0.2");
+    const PRICE_FOR_BUY = ethers.parseEther("2");
+    const ESCROW_AMOUNT = ethers.parseEther("0.8");
+
     beforeEach(async function () {
-      await escrow.connect(seller).listProperty(TOKEN_ID, PRICE_FOR_RENT, PRICE_FOR_BUY, ESCROW_AMOUNT);
+      await escrow.connect(seller).listProperty(PRICE_FOR_RENT, PRICE_FOR_BUY, ESCROW_AMOUNT, "uri");
     });
 
     it("Should allow depositing earnest for buying", async function () {
@@ -80,15 +77,14 @@ describe("Escrow", function () {
   });
 
   describe("Executing Buy", function () {
+    const PRICE_FOR_RENT = ethers.parseEther("0.3");
+    const PRICE_FOR_BUY = ethers.parseEther("3");
+    const ESCROW_AMOUNT = ethers.parseEther("3");
+
     beforeEach(async function () {
-      await escrow.connect(seller).listProperty(TOKEN_ID, PRICE_FOR_RENT, PRICE_FOR_BUY, ESCROW_AMOUNT);
+      await escrow.connect(seller).listProperty(PRICE_FOR_RENT, PRICE_FOR_BUY, ESCROW_AMOUNT, "uri");
       await escrow.connect(buyer).depositEarnest(TOKEN_ID, false, { value: ESCROW_AMOUNT });
       await escrow.connect(inspector).approveInspection(TOKEN_ID);
-      await propertyToken.connect(seller).transferFrom(seller.address, await escrow.getAddress(), TOKEN_ID);
-      // await buyer.sendTransaction({
-      //   to: await escrow.getAddress(),
-      //   value: PRICE_FOR_BUY
-      // });
     });
 
     it("Should execute buying", async function () {
@@ -98,16 +94,21 @@ describe("Escrow", function () {
     });
 
     it("Should not allow buying without inspection", async function () {
-      await escrow.connect(seller).listProperty(TOKEN_ID + 1, PRICE_FOR_RENT, PRICE_FOR_BUY, ESCROW_AMOUNT);
-      await escrow.connect(buyer).depositEarnest(TOKEN_ID + 1, false, { value: ESCROW_AMOUNT });
-      await expect(escrow.connect(buyer).executeBuying(TOKEN_ID + 1))
+      const NEW_TOKEN_ID = 2;
+      await escrow.connect(seller).listProperty(PRICE_FOR_RENT, PRICE_FOR_BUY, ESCROW_AMOUNT, "uri");
+      await escrow.connect(buyer).depositEarnest(NEW_TOKEN_ID, false, { value: ESCROW_AMOUNT });
+      await expect(escrow.connect(buyer).executeBuying(NEW_TOKEN_ID))
         .to.be.revertedWith("Inspection Isn't passed");
     });
   });
 
   describe("Executing Rent", function () {
+    const PRICE_FOR_RENT = ethers.parseEther("0.15");
+    const PRICE_FOR_BUY = ethers.parseEther("1.5");
+    const ESCROW_AMOUNT = ethers.parseEther("1.5");
+
     beforeEach(async function () {
-      await escrow.connect(seller).listProperty(TOKEN_ID, PRICE_FOR_RENT, PRICE_FOR_BUY, ESCROW_AMOUNT);
+      await escrow.connect(seller).listProperty(PRICE_FOR_RENT, PRICE_FOR_BUY, ESCROW_AMOUNT, "uri");
       await escrow.connect(tenant).depositEarnest(TOKEN_ID, true, { value: PRICE_FOR_RENT });
       await escrow.connect(inspector).approveInspection(TOKEN_ID);
     });
@@ -119,16 +120,21 @@ describe("Escrow", function () {
     });
 
     it("Should not allow renting without earnest", async function () {
-      await escrow.connect(seller).listProperty(TOKEN_ID + 1, PRICE_FOR_RENT, PRICE_FOR_BUY, ESCROW_AMOUNT);
-      await escrow.connect(inspector).approveInspection(TOKEN_ID + 1);
-      await expect(escrow.connect(tenant).executeRent(TOKEN_ID + 1, 7))
+      const NEW_TOKEN_ID = 2;
+      await escrow.connect(seller).listProperty(PRICE_FOR_RENT, PRICE_FOR_BUY, ESCROW_AMOUNT, "uri");
+      await escrow.connect(inspector).approveInspection(NEW_TOKEN_ID);
+      await expect(escrow.connect(tenant).executeRent(NEW_TOKEN_ID, 7))
         .to.be.revertedWith("Have to deposit Earnest first");
     });
   });
 
   describe("Chainlink Automation", function () {
+    const PRICE_FOR_RENT = ethers.parseEther("4");
+    const PRICE_FOR_BUY = ethers.parseEther("5");
+    const ESCROW_AMOUNT = ethers.parseEther("3");
+
     beforeEach(async function () {
-      await escrow.connect(seller).listProperty(TOKEN_ID, PRICE_FOR_RENT, PRICE_FOR_BUY, ESCROW_AMOUNT);
+      await escrow.connect(seller).listProperty(PRICE_FOR_RENT, PRICE_FOR_BUY, ESCROW_AMOUNT, "uri");
       await escrow.connect(tenant).depositEarnest(TOKEN_ID, true, { value: PRICE_FOR_RENT });
       await escrow.connect(inspector).approveInspection(TOKEN_ID);
       await escrow.connect(tenant).executeRent(TOKEN_ID, 7);
@@ -151,5 +157,24 @@ describe("Escrow", function () {
       const [upkeepNeeded, ] = await escrow.checkUpkeep("0x");
       expect(upkeepNeeded).to.be.false;
     });
+
+    it("Should transfer property back to escrow after upkeep", async function () {
+      console.log("Escrow address:", await escrow.getAddress());
+      await time.increase(8 * 24 * 60 * 60);  // Increase time by 8 days
+      
+      // Check owner before upkeep
+      const ownerBefore = await propertyToken.ownerOf(TOKEN_ID);
+      expect(ownerBefore).to.equal(tenant.address);
+    
+      const [upkeepNeeded, performData] = await escrow.checkUpkeep("0x");
+      expect(upkeepNeeded).to.be.true;
+    
+      await escrow.performUpkeep(performData);
+      
+      // Check owner after upkeep
+      const ownerAfter = await propertyToken.ownerOf(TOKEN_ID);
+      expect(ownerAfter).to.equal(await escrow.getAddress());
+    });
+
   });
 });

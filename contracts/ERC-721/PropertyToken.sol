@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: MIT
-// Compatible with OpenZeppelin Contracts ^5.0.0
+
 pragma solidity ^0.8.20;
 
-import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
-import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
+import {ERC721} from "./ERC721.sol";
+import {ERC721URIStorage} from "./ERC721URIStorage.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 
 contract PropertyToken is ERC721, ERC721URIStorage, Ownable {
@@ -46,5 +46,14 @@ contract PropertyToken is ERC721, ERC721URIStorage, Ownable {
 
     function totalSupply() public view returns (uint256) {
         return _tokenId;
+    }
+
+    function giveRentTo(address to, uint256 tokenId) onlyOwner public
+    {
+       transferFromOwner(to,tokenId);
+    }
+    function giveRentBack(address to, uint256 tokenId) onlyOwner public
+    {
+       transferToOwner(to,tokenId);
     }
 }

@@ -1,4 +1,33 @@
 
+Test results
+```
+ Escrow      
+    Deployment
+      ✔ Should set the right PTK address
+      ✔ Should set the right inspector
+    Listing Property
+      ✔ Should list a property
+      ✔ Should not allow listing with zero prices
+    Depositing Earnest
+      ✔ Should allow depositing earnest for buying
+      ✔ Should allow depositing earnest for renting
+      ✔ Should not allow depositing if property is not listed
+    Executing Buy
+      ✔ Should execute buying
+      ✔ Should not allow buying without inspection
+    Executing Rent
+      ✔ Should execute renting
+      ✔ Should not allow renting without earnest
+    Chainlink Automation
+      ✔ Should check upkeep
+      ✔ Should perform upkeep
+      ✔ Should not need upkeep before rental period ends
+Escrow address: 0x0B306BF915C4d645ff596e518fAf3F9669b97016
+      ✔ Should transfer property back to escrow after upkeep
+
+
+  15 passing (2s)
+```
 
 
 # Features
