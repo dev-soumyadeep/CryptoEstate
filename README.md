@@ -1,3 +1,9 @@
+#contract structure
+Escrow contract: Tt is the main contract and controls all the operations.
+PropertyToken: The token that reperesents properties onchain. It is a ERC-721 contract.
+
+
+
 
 Test results
 ```
@@ -14,20 +20,32 @@ Test results
       ✔ Should not allow depositing if property is not listed
     Executing Buy
       ✔ Should execute buying
-      ✔ Should not allow buying without inspection
     Executing Rent
-      ✔ Should execute renting
       ✔ Should not allow renting without earnest
     Chainlink Automation
       ✔ Should check upkeep
-      ✔ Should perform upkeep
       ✔ Should not need upkeep before rental period ends
-Escrow address: 0x0B306BF915C4d645ff596e518fAf3F9669b97016
       ✔ Should transfer property back to escrow after upkeep
+    Unauthorized Direct Calls to PropertyToken
+      ✔ Should not allow unauthorized direct call to giveRentTo
+      ✔ Should not allow unauthorized direct call to giveRentBack
 
 
-  15 passing (2s)
+  17 passing (2s)
 ```
+
+Deploying [ Escrow ]
+```
+Batch #1
+  Executed Escrow#Escrow
+
+[ Escrow ] successfully deployed 🚀
+
+Deployed Addresses
+
+Escrow#Escrow - 0xc3062430Aa70dABd1e33a702323aB6c4980883fd
+```
+
 
 
 # Features
@@ -37,7 +55,3 @@ Escrow address: 0x0B306BF915C4d645ff596e518fAf3F9669b97016
 **Rental Management**: Easy management of rental agreements, payments, and durations.
 **Automatic Property Reclaim**: Automatically reclaims rented properties once the rental period expires, ensuring timely and efficient property management.
 
-
-
-
-# Note: This project is currently under development.
