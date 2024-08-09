@@ -5,7 +5,6 @@ const { time } = require("@nomicfoundation/hardhat-network-helpers");
 describe("Escrow", function () {
   let Escrow;
   let escrow;
-  let PropertyToken;
   let propertyToken;
   let owner;
   let inspector;
@@ -18,16 +17,19 @@ describe("Escrow", function () {
   beforeEach(async function () {
     [owner, inspector, seller, buyer, tenant] = await ethers.getSigners();
 
+    // Deploy Escrow contract and get the address of PropertyToken
     Escrow = await ethers.getContractFactory("Escrow");
     escrow = await Escrow.deploy(inspector.address);
     await escrow.waitForDeployment();
-    const propertyTokenAddress = await escrow.PTKcontract();
+
+    // Get the deployed PropertyToken contract from the Escrow contract
+    const propertyTokenAddress = await escrow.getPropertyTokenAddress();
     propertyToken = await ethers.getContractAt("PropertyToken", propertyTokenAddress);
   });
 
   describe("Deployment", function () {
     it("Should set the right PTK address", async function () {
-      expect(await escrow.PTKcontract()).to.equal(await propertyToken.getAddress());
+      expect(await escrow.getPropertyTokenAddress()).to.equal(await propertyToken.getAddress());
     });
 
     it("Should set the right inspector", async function () {
@@ -159,7 +161,6 @@ describe("Escrow", function () {
     });
 
     it("Should transfer property back to escrow after upkeep", async function () {
-      console.log("Escrow address:", await escrow.getAddress());
       await time.increase(8 * 24 * 60 * 60);  // Increase time by 8 days
       
       // Check owner before upkeep
@@ -177,4 +178,30 @@ describe("Escrow", function () {
     });
 
   });
+
+  describe("Unauthorized Direct Calls to PropertyToken", function () {
+    const PRICE_FOR_RENT = ethers.parseEther("0.15");
+    const PRICE_FOR_BUY = ethers.parseEther("1.5");
+    const ESCROW_AMOUNT = ethers.parseEther("1.5");
+  
+    beforeEach(async function () {
+      await escrow.connect(seller).listProperty(PRICE_FOR_RENT, PRICE_FOR_BUY, ESCROW_AMOUNT, "uri");
+      await escrow.connect(tenant).depositEarnest(TOKEN_ID, true, { value: PRICE_FOR_RENT });
+      await escrow.connect(inspector).approveInspection(TOKEN_ID);
+      await escrow.connect(tenant).executeRent(TOKEN_ID, 7);
+    });
+  
+    it("Should not allow unauthorized direct call to giveRentTo", async function () {
+      await expect(
+        propertyToken.connect(buyer).giveRentTo(buyer.address, TOKEN_ID)
+      ).to.be.revertedWithCustomError(propertyToken,"OwnableUnauthorizedAccount");  
+    });
+  
+    it("Should not allow unauthorized direct call to giveRentBack", async function () {
+      await expect(
+        propertyToken.connect(buyer).giveRentBack(buyer.address, TOKEN_ID)
+      ).to.be.revertedWithCustomError(propertyToken,"OwnableUnauthorizedAccount");  
+    });
+  });
+  
 });

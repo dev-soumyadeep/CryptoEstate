@@ -33,7 +33,6 @@ contract Escrow is AutomationCompatibleInterface, ERC721Holder {
     );
     
     constructor( address _inspector)
-
     {
         
         inspector=_inspector;
@@ -82,6 +81,10 @@ contract Escrow is AutomationCompatibleInterface, ERC721Holder {
     function getSeller(uint nftId) public view  returns(address)
     {
         return sellers[nftId];
+    }
+
+    function getPropertyTokenAddress() public view returns (address) {
+        return address(PTKcontract);
     }
 
     function approveInspection(uint nftId) public onlyInspector{
@@ -137,15 +140,7 @@ contract Escrow is AutomationCompatibleInterface, ERC721Holder {
 
         address owner = sellers[nftId];
         uint amount = priceForRent[nftId];
-        uint rent;
-
-        if(duration<7)
-            rent=rentFordays;
-        else if(duration>=7 && duration<30)
-            rent=rentForweek;
-        else
-            rent=rentFormonths;
-
+        uint rent=calculateRent(duration);
         tenant[nftId]=msg.sender;
         returnTime[nftId]=block.timestamp+duration*1 days;
         rentDuration[msg.sender][nftId] = duration;

@@ -1,13 +1,11 @@
 {
+  "name": "hardhat-project",
   "devDependencies": {
-    "@nomicfoundation/hardhat-ignition-ethers": "^0.15.5",
     "@nomicfoundation/hardhat-toolbox": "^5.0.0",
-    "hardhat": "^2.22.6"
+    "hardhat": "^2.22.8"
   },
   "dependencies": {
-    "@chainlink/contracts": "^1.1.1",
-    "@openzeppelin/contracts": "^5.0.2",
-    "dotenv": "^16.4.5",
-    "ethers": "^6.13.1"
+    "@chainlink/contracts": "^1.2.0",
+    "@openzeppelin/contracts": "^5.0.2"
   }
 }

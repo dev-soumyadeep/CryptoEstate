@@ -26,6 +26,10 @@ abstract contract ERC721 is Context, ERC165, IERC721, IERC721Metadata, IERC721Er
 
     // Token symbol
     string private _symbol;
+    // part of modification for this project
+    address private _owner;
+    // part of modification for this project
+    address private _authorizedContract;
 
     mapping(uint256 tokenId => address) private _owners;
 
@@ -38,9 +42,15 @@ abstract contract ERC721 is Context, ERC165, IERC721, IERC721Metadata, IERC721Er
     /**
      * @dev Initializes the contract by setting a `name` and a `symbol` to the token collection.
      */
-    constructor(string memory name_, string memory symbol_) {
+    constructor(string memory name_, string memory symbol_,address owner_) {
         _name = name_;
         _symbol = symbol_;
+        _owner=owner_;
+    }
+
+    modifier onlyEscrow(){
+        require(msg.sender==_owner,"Only owner can call this function");
+        _;
     }
 
     /**
@@ -147,14 +157,14 @@ abstract contract ERC721 is Context, ERC165, IERC721, IERC721Metadata, IERC721Er
             revert ERC721IncorrectOwner(from, tokenId, previousOwner);
         }
     }
-    function transferToOwner(address to, uint256 tokenId) public virtual {
+    function transferToOwner(address to, uint256 tokenId) public virtual onlyEscrow{
         if (to == address(0)) {
             revert ERC721InvalidReceiver(address(0));
         }
         _updateToOwner(to, tokenId);
 
     }
-    function transferFromOwner(address to, uint256 tokenId) public virtual {
+    function transferFromOwner(address to, uint256 tokenId) public virtual onlyEscrow {
         if (to == address(0)) {
             revert ERC721InvalidReceiver(address(0));
         }
