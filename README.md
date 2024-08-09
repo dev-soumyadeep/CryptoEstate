@@ -1,6 +1,8 @@
-#contract structure
-Escrow contract: Tt is the main contract and controls all the operations.
-PropertyToken: The token that reperesents properties onchain. It is a ERC-721 contract.
+## contract structure
+# Escrow contract: 
+The Escrow contract is the core of the system, overseeing and controlling all operations related to property transactions. It handles listing, purchasing, renting, and the secure management of funds through an escrow mechanism.
+# PropertyToken: 
+PropertyToken represents properties on the blockchain as ERC-721 tokens. Each token corresponds to a unique property, allowing for seamless on-chain property management, ownership transfers, and rental agreements.
 
 
 
