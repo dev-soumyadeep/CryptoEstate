@@ -1,8 +1,10 @@
 # Contract Structure
 ## Escrow contract: 
 The Escrow contract is the core of the system, overseeing and controlling all operations related to property transactions. It handles listing, purchasing, renting, and the secure management of funds through an escrow mechanism.
-## PropertyToken: 
+## PropertyToken Contract: 
 PropertyToken represents properties on the blockchain as ERC-721 tokens. Each token corresponds to a unique property, allowing for seamless on-chain property management, ownership transfers, and rental agreements.
+## ERC-721:
+modified ERC-721 contract is used to implement the auto-return mechanism and secured from external attack.
 
 
 
