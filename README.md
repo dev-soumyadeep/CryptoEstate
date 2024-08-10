@@ -1,7 +1,7 @@
-## contract structure
-# Escrow contract: 
+# Contract Structure
+## Escrow contract: 
 The Escrow contract is the core of the system, overseeing and controlling all operations related to property transactions. It handles listing, purchasing, renting, and the secure management of funds through an escrow mechanism.
-# PropertyToken: 
+## PropertyToken: 
 PropertyToken represents properties on the blockchain as ERC-721 tokens. Each token corresponds to a unique property, allowing for seamless on-chain property management, ownership transfers, and rental agreements.
 
 
@@ -51,9 +51,13 @@ Escrow#Escrow - 0xc3062430Aa70dABd1e33a702323aB6c4980883fd
 
 
 # Features
-**Property Listings**: Users can list properties for sale or rent, complete with detailed descriptions, images, and pricing.
-**Smart Contract Transactions**: Automated, secure, and transparent transactions powered by Ethereum smart contracts.
-**Escrow Services**: Ensures safe transactions by holding funds in escrow until conditions are met.
-**Rental Management**: Easy management of rental agreements, payments, and durations.
-**Automatic Property Reclaim**: Automatically reclaims rented properties once the rental period expires, ensuring timely and efficient property management.
-
+## Property Listings: 
+Users can list properties for sale or rent, complete with detailed descriptions, images, and pricing.
+## Smart Contract Transactions: 
+Automated, secure, and transparent transactions powered by Ethereum smart contracts.
+## Escrow Services: 
+Ensures safe transactions by holding funds in escrow until conditions are met.
+## Rental Management: 
+Easy management of rental agreements, payments, and durations.
+## Automatic Property Return: 
+Automatically reclaims rented properties once the rental period expires, ensuring timely and efficient property management.
