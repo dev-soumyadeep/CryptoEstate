@@ -47,9 +47,10 @@ Batch #1
 
 Deployed Addresses
 
-Escrow#Escrow - 0xc3062430Aa70dABd1e33a702323aB6c4980883fd
+Escrow#Escrow - 0xc3062430Aa70dABd1e33a702323aB6c4980883fd (Sepolia)
 ```
-
+Successfully verified contract "contracts/Escrow.sol:Escrow" for network sepolia:       
+- https://sepolia.etherscan.io/address/0xc3062430Aa70dABd1e33a702323aB6c4980883fd#code
 
 
 # Features
