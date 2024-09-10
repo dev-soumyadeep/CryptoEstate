@@ -4,10 +4,8 @@ pragma solidity ^0.8.20;
 import {PropertyToken} from "./ERC-721/PropertyToken.sol";
 import "@openzeppelin/contracts/token/ERC721/utils/ERC721Holder.sol";
 import {AutomationCompatibleInterface} from "@chainlink/contracts/src/v0.8/automation/AutomationCompatible.sol";
-// import "@openzeppelin/contracts/access/Ownable.sol";
 contract Escrow is AutomationCompatibleInterface, ERC721Holder {
 
-    address public PTKaddress;
     address public inspector;
     PropertyToken public PTKcontract;
 

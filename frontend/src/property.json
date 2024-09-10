@@ -1,0 +1,23 @@
+{
+    "1":{
+        "priceForRent":"0.00005",
+        "priceForBuy":"0.0005",
+        "escrowAmt":"0.00000005",
+        "name":"Sunnyvale Estate",
+        "description":"A luxurious 4-bedroom estate located in the heart of Sunnyvale. Featuring a spacious garden, modern amenities, and a pool, this property offers serene living in a prime location."
+    },
+    "2":{
+        "priceForRent":"0.00045",
+        "priceForBuy":"0.00145",
+        "escrowAmt":"0.0000015",
+        "name":"Maplewood Manor",
+        "description":"A charming 3-bedroom countryside manor surrounded by maple trees. It offers a cozy interior with a fireplace, wooden finishes, and stunning views of the nearby hills."
+    },
+    "3":{
+        "priceForRent":"0.0002",
+        "priceForBuy":"0.02",
+        "escrowAmt":"0.0000001",
+        "name":"Oceanview Villa",
+        "description":"This 5-bedroom beachfront villa boasts panoramic ocean views, private beach access, and a large deck for outdoor entertaining. Perfect for those seeking a coastal retreat."
+    }
+}

@@ -1,5 +1,6 @@
 require("@nomicfoundation/hardhat-toolbox");
 require("@nomicfoundation/hardhat-ignition-ethers");
+require("@nomicfoundation/hardhat-verify");
 require('dotenv').config()
 /** @type import('hardhat/config').HardhatUserConfig */
 
@@ -14,5 +15,10 @@ module.exports = {
   etherscan :{
     apiKey:{
       sepolia: process.env.ETHERSCAN_API_KEY}
+  },
+  sourcify: {
+    // Disabled by default
+    // Doesn't need an API key
+    enabled: true
   }
 };

@@ -47,13 +47,16 @@ Batch #1
 
 Deployed Addresses
 
-Escrow#Escrow - 0xc3062430Aa70dABd1e33a702323aB6c4980883fd (Sepolia)
-```
+Escrow#Escrow - 0xe05e01f4f8a7b9b18bCb46C52835f739A13827f8 (Sepolia)
+
 Successfully verified contract "contracts/Escrow.sol:Escrow" for network sepolia:       
-- https://sepolia.etherscan.io/address/0xc3062430Aa70dABd1e33a702323aB6c4980883fd#code
+- https://sepolia.etherscan.io/address/0xe05e01f4f8a7b9b18bCb46C52835f739A13827f8#code
+
+PropertyToken Address-0xf95eD1ddff321AF71EF5e53E9722e85784409875 
 
 Chainlink Upkeep registry address:
  -0x86EFBD0b6736Bed994962f9797049422A3A8E8Ad
+```
 
 
 # Features

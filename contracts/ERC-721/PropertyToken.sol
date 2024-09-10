@@ -14,17 +14,12 @@ contract PropertyToken is ERC721, ERC721URIStorage, Ownable {
         Ownable(initialOwner)
     {}
 
-    function _baseURI() internal pure override returns (string memory) {
-        return "demo";
-    } 
 
     function safeMint(address to, string memory uri) public onlyOwner {
         uint256 tokenId = ++_tokenId;
         _safeMint(to, tokenId);
         _setTokenURI(tokenId, uri);
     }
-
-    // The following functions are overrides required by Solidity.
 
     function tokenURI(uint256 tokenId)
         public
