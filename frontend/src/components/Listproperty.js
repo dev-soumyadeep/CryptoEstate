@@ -20,7 +20,7 @@ const ListProperty=({provider})=>{
             const responseData = await axios.post("https://api.pinata.cloud/pinning/pinFileToIPFS",fileData,{
                 headers:{
 
-                    Authorization:`Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySW5mb3JtYXRpb24iOnsiaWQiOiIwZjZjZjRiYi04OGEwLTQyZGUtODBhZC0wMGMzNmQyNTY1NWEiLCJlbWFpbCI6InNvdW15YWRlZXAueGxwQGdtYWlsLmNvbSIsImVtYWlsX3ZlcmlmaWVkIjp0cnVlLCJwaW5fcG9saWN5Ijp7InJlZ2lvbnMiOlt7ImRlc2lyZWRSZXBsaWNhdGlvbkNvdW50IjoxLCJpZCI6IkZSQTEifSx7ImRlc2lyZWRSZXBsaWNhdGlvbkNvdW50IjoxLCJpZCI6Ik5ZQzEifV0sInZlcnNpb24iOjF9LCJtZmFfZW5hYmxlZCI6ZmFsc2UsInN0YXR1cyI6IkFDVElWRSJ9LCJhdXRoZW50aWNhdGlvblR5cGUiOiJzY29wZWRLZXkiLCJzY29wZWRLZXlLZXkiOiJhZDIyNzY2ZGJhZmVjMjQ3N2Y3NyIsInNjb3BlZEtleVNlY3JldCI6ImIzZDU3ZDI2MmZjM2FmMGYyNzY5YjdhMzRjMjE5ZmQyYmJlZTZiNzI3Y2FhZTZlOTFiNjgxNjk0MmFjMjZjZjIiLCJleHAiOjE3NTY1NDY3MTh9.-wXE2iN0GTJJAwl-sgX_hbZa3dKwPqjMLxc9jSUcmHI`
+                    Authorization:`Bearer token`
                 }
         })
 
@@ -45,7 +45,7 @@ const ListProperty=({provider})=>{
             const metadataResponse = await axios.post("https://api.pinata.cloud/pinning/pinFileToIPFS", metadataFileData, {
                 headers:{
 
-                    Authorization:`Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySW5mb3JtYXRpb24iOnsiaWQiOiIwZjZjZjRiYi04OGEwLTQyZGUtODBhZC0wMGMzNmQyNTY1NWEiLCJlbWFpbCI6InNvdW15YWRlZXAueGxwQGdtYWlsLmNvbSIsImVtYWlsX3ZlcmlmaWVkIjp0cnVlLCJwaW5fcG9saWN5Ijp7InJlZ2lvbnMiOlt7ImRlc2lyZWRSZXBsaWNhdGlvbkNvdW50IjoxLCJpZCI6IkZSQTEifSx7ImRlc2lyZWRSZXBsaWNhdGlvbkNvdW50IjoxLCJpZCI6Ik5ZQzEifV0sInZlcnNpb24iOjF9LCJtZmFfZW5hYmxlZCI6ZmFsc2UsInN0YXR1cyI6IkFDVElWRSJ9LCJhdXRoZW50aWNhdGlvblR5cGUiOiJzY29wZWRLZXkiLCJzY29wZWRLZXlLZXkiOiJhZDIyNzY2ZGJhZmVjMjQ3N2Y3NyIsInNjb3BlZEtleVNlY3JldCI6ImIzZDU3ZDI2MmZjM2FmMGYyNzY5YjdhMzRjMjE5ZmQyYmJlZTZiNzI3Y2FhZTZlOTFiNjgxNjk0MmFjMjZjZjIiLCJleHAiOjE3NTY1NDY3MTh9.-wXE2iN0GTJJAwl-sgX_hbZa3dKwPqjMLxc9jSUcmHI`
+                    Authorization:`Bearer token`
                 },
             });
 
