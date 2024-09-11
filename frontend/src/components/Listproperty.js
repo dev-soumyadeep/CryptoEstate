@@ -7,6 +7,7 @@ import property from "../property.json"
 // require('dotenv').config();
 
 const ListProperty=({provider})=>{
+const TOKEN=process.env.REACT_APP_PINATA_JWT_TOKEN
 
     const[file,setFile]=useState(0);
     const[uri,setUri]=useState("")
@@ -20,7 +21,7 @@ const ListProperty=({provider})=>{
             const responseData = await axios.post("https://api.pinata.cloud/pinning/pinFileToIPFS",fileData,{
                 headers:{
 
-                    Authorization:`Bearer token`
+                    Authorization:`Bearer ${TOKEN}`
                 }
         })
 
@@ -45,7 +46,7 @@ const ListProperty=({provider})=>{
             const metadataResponse = await axios.post("https://api.pinata.cloud/pinning/pinFileToIPFS", metadataFileData, {
                 headers:{
 
-                    Authorization:`Bearer token`
+                    Authorization:`Bearer ${TOKEN}`
                 },
             });
 
