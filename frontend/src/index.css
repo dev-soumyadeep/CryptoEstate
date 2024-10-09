@@ -8,7 +8,7 @@
 
 :root {
   --clr-white: #FFFFFF;
-  --clr-black: #202020;
+  --clr-black: #000103;
   --clr-grey: #707070;
   --clr-blue: #6C63FF;
   --clr-blue-2: #4c46b6;
@@ -20,6 +20,7 @@ body {
   font-family: "Open Sans";
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  /* background-color:#000103 ; */
 }
 
 /* ------------------------------------------------------ */
@@ -98,7 +99,7 @@ nav {
 /* -- HEADER -- */
 
 header {
-  background-image: url("./components/backgound2.2.png");
+  background-image: url("./components/background1.png");
   background-position: center;
   background-size: cover;
   min-height: 40vh;
@@ -252,7 +253,7 @@ header {
   align-items: center;
 
   width: 80%;
-  height: 70%;
+  height: 60%;
   margin: 0 auto;
   padding: 20px;
 

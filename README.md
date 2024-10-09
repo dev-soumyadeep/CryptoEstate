@@ -7,27 +7,25 @@ PropertyToken represents properties on the blockchain as ERC-721 tokens. Each to
 modified ERC-721 contract is used to implement the auto-return mechanism and secured from external attack.
 
 
-
+#Demo video
+https://www.loom.com/share/a4c8394a1c564dd58c34c6a4addbe3ea?sid=11bbe005-6684-459d-963c-8de0f69f1de2
 
 Test results
 ```
- Escrow      
+ Escrow
     Deployment
       ✔ Should set the right PTK address
       ✔ Should set the right inspector
     Listing Property
       ✔ Should list a property
       ✔ Should not allow listing with zero prices
-    Depositing Earnest
-      ✔ Should allow depositing earnest for buying
-      ✔ Should allow depositing earnest for renting
-      ✔ Should not allow depositing if property is not listed
-    Executing Buy
-      ✔ Should execute buying
-    Executing Rent
-      ✔ Should not allow renting without earnest
+    Buying and Renting
+      ✔ Should allow depositing earnest and buying
+      ✔ Should allow depositing earnest and renting
+      ✔ Should not allow buying/renting if property is not listed
     Chainlink Automation
       ✔ Should check upkeep
+      ✔ Should perform upkeep
       ✔ Should not need upkeep before rental period ends
       ✔ Should transfer property back to escrow after upkeep
     Unauthorized Direct Calls to PropertyToken
@@ -47,15 +45,20 @@ Batch #1
 
 Deployed Addresses
 
-Escrow#Escrow - 0xe05e01f4f8a7b9b18bCb46C52835f739A13827f8 (Sepolia)
+Escrow#Escrow - 0xc3062430Aa70dABd1e33a702323aB6c4980883fd (Polygon Amoy)
+PropertyToken Address-0x1C445C5efe4980468832906f97BB6fF379C8043C 
 
-Successfully verified contract "contracts/Escrow.sol:Escrow" for network sepolia:       
-- https://sepolia.etherscan.io/address/0xe05e01f4f8a7b9b18bCb46C52835f739A13827f8#code
+Verifying contract "contracts/Escrow.sol:Escrow" for network polygonAmoy...
+Successfully verified contract "contracts/Escrow.sol:Escrow" for network polygonAmoy:
+  - https://www.oklink.com/amoy/address/0xc3062430Aa70dABd1e33a702323aB6c4980883fd#code
 
-PropertyToken Address-0xf95eD1ddff321AF71EF5e53E9722e85784409875 
+Verifying contract "contracts/ERC-721/PropertyToken.sol:PropertyToken" for network polygonAmoy...
+Successfully verified contract "contracts/ERC-721/PropertyToken.sol:PropertyToken" for network polygonAmoy:
+  - https://www.oklink.com/amoy/address/0x1C445C5efe4980468832906f97BB6fF379C8043C#code
+
 
 Chainlink Upkeep registry address:
- -0x86EFBD0b6736Bed994962f9797049422A3A8E8Ad
+ -0x93C0e201f7B158F503a1265B6942088975f92ce7
 ```
 
 

@@ -29,14 +29,14 @@ export default function App() {
     setProvider(provider)
     // console.log(provider)
     const network = await provider.getNetwork()
-    // console.log(network)
+    console.log(network)
     const realEstate = new ethers.Contract(config[network.chainId].realEstate.address, RealEstate, provider)
     // console.log(realEstate)
     const totalSupply = await realEstate.totalSupply()
     // console.log(totalSupply)
     const homes = []
 
-    for (var i = 3; i <= totalSupply; i++) {
+    for (var i = 1; i <= totalSupply; i++) {
       try{
         const uri = await realEstate.tokenURI(i)
         const response = await fetch(uri)

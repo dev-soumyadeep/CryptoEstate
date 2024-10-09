@@ -1,23 +1,51 @@
 {
-    "1":{
-        "priceForRent":"0.00005",
-        "priceForBuy":"0.0005",
-        "escrowAmt":"0.00000005",
-        "name":"Sunnyvale Estate",
-        "description":"A luxurious 4-bedroom estate located in the heart of Sunnyvale. Featuring a spacious garden, modern amenities, and a pool, this property offers serene living in a prime location."
+    "1": {
+        "priceForRent": "0.000005",
+        "priceForBuy": "0.00005",
+        "escrowAmt": "0.00000005",
+        "name": "Sunnyvale Estate",
+        "description": "A luxurious 4-bedroom estate located in the heart of Sunnyvale. Featuring a spacious garden, modern amenities, and a pool, this property offers serene living in a prime location."
     },
-    "2":{
-        "priceForRent":"0.00045",
-        "priceForBuy":"0.00145",
-        "escrowAmt":"0.0000015",
-        "name":"Maplewood Manor",
-        "description":"A charming 3-bedroom countryside manor surrounded by maple trees. It offers a cozy interior with a fireplace, wooden finishes, and stunning views of the nearby hills."
+    "2": {
+        "priceForRent": "0.0000045",
+        "priceForBuy": "0.0001",
+        "escrowAmt": "0.00000015",
+        "name": "Maplewood Manor",
+        "description": "A charming 3-bedroom countryside manor surrounded by maple trees. It offers a cozy interior with a fireplace, wooden finishes, and stunning views of the nearby hills."
     },
-    "3":{
-        "priceForRent":"0.0002",
-        "priceForBuy":"0.02",
-        "escrowAmt":"0.0000001",
-        "name":"Oceanview Villa",
-        "description":"This 5-bedroom beachfront villa boasts panoramic ocean views, private beach access, and a large deck for outdoor entertaining. Perfect for those seeking a coastal retreat."
+    "3": {
+        "priceForRent": "0.000002",
+        "priceForBuy": "0.0002",
+        "escrowAmt": "0.0000001",
+        "name": "Oceanview Villa",
+        "description": "This 5-bedroom beachfront villa boasts panoramic ocean views, private beach access, and a large deck for outdoor entertaining. Perfect for those seeking a coastal retreat."
+    },
+    "4": {
+        "priceForRent": "0.000007",
+        "priceForBuy": "0.00007",
+        "escrowAmt": "0.00000003",
+        "name": "Greenfield Apartment",
+        "description": "A stylish 2-bedroom apartment in the bustling Greenfield district. The apartment offers modern interiors and is close to parks, cafes, and shopping areas."
+    },
+    "5": {
+        "priceForRent": "0.000008",
+        "priceForBuy": "0.00009",
+        "escrowAmt": "0.00000005",
+        "name": "Riverside Cottage",
+        "description": "A picturesque cottage by the river, featuring a rustic design and a peaceful environment, ideal for relaxation and a quick getaway."
+    },
+    "6": {
+        "priceForRent": "0.0000035",
+        "priceForBuy": "0.00005",
+        "escrowAmt": "0.00000002",
+        "name": "Urban Loft",
+        "description": "A modern loft in the heart of the city with open spaces, high ceilings, and a rooftop terrace with stunning skyline views."
+    },
+    "7": {
+        "priceForRent": "0.000009",
+        "priceForBuy": "0.00006",
+        "escrowAmt": "0.00000004",
+        "name": "Mountain Retreat",
+        "description": "A secluded cabin located in the mountains, offering breathtaking views, hiking trails nearby, and a cozy fireplace."
     }
 }

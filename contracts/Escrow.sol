@@ -8,7 +8,6 @@ contract Escrow is AutomationCompatibleInterface, ERC721Holder {
 
     address public inspector;
     PropertyToken public PTKcontract;
-
     uint rentFordays=1;
     uint rentForweek=2;
     uint rentFormonths=3;
@@ -34,7 +33,7 @@ contract Escrow is AutomationCompatibleInterface, ERC721Holder {
     {
         
         inspector=_inspector;
-        PTKcontract = new PropertyToken(address(this));
+        
 
     }
 
@@ -52,7 +51,7 @@ contract Escrow is AutomationCompatibleInterface, ERC721Holder {
     mapping(uint=>uint)priceForRent;
     mapping(uint=>uint)priceForBuy;
     mapping(uint=>bool)isInspectionPassed;
-    mapping(uint=> mapping(address=>bool))approval;
+  
 
     uint[] public activeTokensOnRent;
 
@@ -71,7 +70,9 @@ contract Escrow is AutomationCompatibleInterface, ERC721Holder {
         escrowAmount[nftId] = _escrowAmt;
 
     }
-
+    function _initiatePropertyToken(address ptkcontract) public onlyInspector{
+        PTKcontract =  PropertyToken(ptkcontract);
+    }
     function getTotalSupply() public view returns(uint){
         return PTKcontract.totalSupply();
     }
@@ -93,26 +94,35 @@ contract Escrow is AutomationCompatibleInterface, ERC721Holder {
         return isInspectionPassed[nftId];
     }
 
-    function depositEarnest(uint nftId,bool rent) public payable
+    
+    function getTenant(uint nftId) public view returns(address){
+        return tenant[nftId];
+    }
+
+    function getReturnTime(uint nftId) public view returns(uint){
+        return returnTime[nftId];
+    }
+
+    function processTransaction(uint nftId,bool rent,uint duration) public payable
     {
         require(isListed[nftId],"Property is already sold");
         require(tenant[nftId]==address(0),"Property is on Rent");
         if(!rent)
+        {
             require(msg.value>=escrowAmount[nftId],"Amount should be greater than/equal to  escrow amount");
+            executeBuying(nftId);
+        }
         else
         {
            require(msg.value>=priceForRent[nftId],"Amount should be greater than/equal to  escrow amount"); 
            tenant[nftId]=msg.sender;
+           executeRent(nftId,duration);
         }
     }
 
-    function approveSale(uint nftId) public {
-        require(approval[nftId][msg.sender]==false,"ALready Approved");
-        approval[nftId][msg.sender]=true;
 
-    }
 
-    function executeBuying(uint nftId) public {
+    function executeBuying(uint nftId) internal  {
         uint supply =  getTotalSupply();
         require(nftId<=supply,"Property doesn't exists");
         require(isInspectionPassed[nftId]==true,"Inspection Isn't passed");
@@ -129,7 +139,7 @@ contract Escrow is AutomationCompatibleInterface, ERC721Holder {
         emit PurchaisedPropertySuccess(nftId,msg.sender,seller);
 
     }
-    function executeRent(uint nftId,uint duration) public {
+    function executeRent(uint nftId,uint duration) internal {
         uint supply =  getTotalSupply();
         require(nftId<=supply,"Property doesn't exists");
         require(tenant[nftId]==msg.sender,"Have to deposit Earnest first");
@@ -149,9 +159,6 @@ contract Escrow is AutomationCompatibleInterface, ERC721Holder {
         emit RentedPropertySuccess(nftId,msg.sender,owner,rent);
     }
 
-    function getTenant(uint nftId) public view returns(address){
-        return tenant[nftId];
-    }
 
     function returnRentedproperty(uint nftId) internal{
         require(tenant[nftId]!=address(0),"Property is not on rent");

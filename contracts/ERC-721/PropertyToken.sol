@@ -9,9 +9,9 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 contract PropertyToken is ERC721, ERC721URIStorage, Ownable {
     uint256 private _tokenId;
 
-    constructor(address initialOwner)
-        ERC721("PropertyToken", "PTK",initialOwner)
-        Ownable(initialOwner)
+    constructor(address owner)
+        ERC721("PropertyToken", "PTK",owner)
+        Ownable(owner)
     {}
 
 
