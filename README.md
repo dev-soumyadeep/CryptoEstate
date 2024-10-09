@@ -7,7 +7,7 @@ PropertyToken represents properties on the blockchain as ERC-721 tokens. Each to
 modified ERC-721 contract is used to implement the auto-return mechanism and secured from external attack.
 
 
-#Demo video
+# Demo video
 https://www.loom.com/share/a4c8394a1c564dd58c34c6a4addbe3ea?sid=11bbe005-6684-459d-963c-8de0f69f1de2
 
 Test results
