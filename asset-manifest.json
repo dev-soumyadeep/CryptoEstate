@@ -1,0 +1,16 @@
+{
+  "files": {
+    "main.css": "/CryptoEstate/static/css/main.832c81b5.css",
+    "main.js": "/CryptoEstate/static/js/main.1b5473f7.js",
+    "static/media/background1.png": "/CryptoEstate/static/media/background1.51a35c8707301fd046b6.png",
+    "static/media/logo.svg": "/CryptoEstate/static/media/logo.4cca1e550fb4806e38214e8f0e534015.svg",
+    "index.html": "/CryptoEstate/index.html",
+    "static/media/close.svg": "/CryptoEstate/static/media/close.ae469738e479d31aa952364e12120ad2.svg",
+    "main.832c81b5.css.map": "/CryptoEstate/static/css/main.832c81b5.css.map",
+    "main.1b5473f7.js.map": "/CryptoEstate/static/js/main.1b5473f7.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.832c81b5.css",
+    "static/js/main.1b5473f7.js"
+  ]
+}
