@@ -31,7 +31,7 @@ export default function App() {
     const network = await provider.getNetwork()
     console.log(network)
     const realEstate = new ethers.Contract(config[network.chainId].realEstate.address, RealEstate, provider)
-    // console.log(realEstate)
+    console.log(realEstate)
     const totalSupply = await realEstate.totalSupply()
     // console.log(totalSupply)
     const homes = []
